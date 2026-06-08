@@ -1,3 +1,4 @@
+import asyncio
 import gradio as gr
 from ingest import load_documents, chunk_document
 from retriever import embed_and_store, retrieve, get_collection
@@ -56,8 +57,9 @@ def chat(message, history):
 # Gradio UI
 # ---------------------------------------------------------------------------
 
+theme = gr.themes.Soft(primary_hue="indigo")
+
 with gr.Blocks(
-    theme=gr.themes.Soft(primary_hue="indigo"),
     title="RulesBot",
 ) as demo:
 
@@ -76,10 +78,8 @@ with gr.Blocks(
         with gr.Column(scale=3):
             gr.ChatInterface(
                 fn=chat,
-                type="messages",
                 chatbot=gr.Chatbot(
                     height=440,
-                    type="messages",
                     placeholder=(
                         "<div style='text-align:center; color:#9ca3af; margin-top:3rem;'>"
                         "Ask a rules question to get started — no arguing required 🎯"
@@ -134,8 +134,15 @@ with gr.Blocks(
 
 
 if __name__ == "__main__":
+    # Ensure a valid event loop exists for Python 3.13+ compatibility
+    try:
+        asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
     print("\n" + "="*50)
     print("  RulesBot — starting up")
     print("="*50 + "\n")
     run_ingestion()
-    demo.launch()
+    demo.queue().launch(theme=theme)

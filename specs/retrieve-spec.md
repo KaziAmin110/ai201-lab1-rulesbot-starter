@@ -55,7 +55,11 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 *Sketch out what one item in your return list looks like as a concrete example. Where does each field come from in the query results?*
 
 ```
-[your answer here]
+{
+    "text" : "Hello There",
+    "game" : "Uno",
+    "distance" : 0.12
+}
 ```
 
 ---
@@ -65,7 +69,7 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 *`_collection.query()` returns nested lists. Describe what index you need to access to get the actual list of results for a single query, and why the nesting exists.*
 
 ```
-[your answer here]
+`_collection.query()` returns lists of lists (e.g., `results['documents'][0]`) because Chroma is designed to handle multiple queries at once. Since we only send one query string, we need to access index `[0]` of the results to get the matching chunks for our specific question.
 ```
 
 ---
@@ -75,7 +79,8 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 *Will you filter out results above a certain distance score, or return all `n_results` regardless of how relevant they are? What are the tradeoffs of each approach?*
 
 ```
-[your answer here]
+I will return all `n_results` regardless of distance for now. 
+Tradeoffs: Filtering would reduce "noise," but if the embedding model doesn't see a high similarity for a niche rule, filtering might prevent the AI from seeing the correct answer entirely. It is better to let the LLM see the chunks and decide if they are relevant.
 ```
 
 ---

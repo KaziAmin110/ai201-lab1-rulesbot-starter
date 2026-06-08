@@ -1,5 +1,5 @@
 import os
-from config import DOCS_PATH
+from config import DOCS_PATH, CHUNK_SIZE, CHUNK_OVERLAP
 
 
 def load_documents():
@@ -42,8 +42,8 @@ def chunk_document(text, game_name):
       - "game"     : the game name, e.g. "Catan" (str)
       - "chunk_id" : a unique identifier, e.g. "catan_0", "catan_1" (str)
     """
-    chunk_size = 300
-    overlap = 50
+    chunk_size = CHUNK_SIZE
+    overlap = CHUNK_OVERLAP
     min_length = 50
 
     chunks = []
@@ -53,9 +53,10 @@ def chunk_document(text, game_name):
     start = 0
     while start < len(text):
         end = start + chunk_size
-        chunk_text = text[start:end].strip()
+        # Prepend game name to chunk text to improve semantic retrieval relevance
+        chunk_text = f"[{game_name}] {text[start:end].strip()}"
 
-        if len(chunk_text) >= min_length:
+        if len(text[start:end].strip()) >= min_length:
             chunks.append({
                 "text": chunk_text,
                 "game": game_name,

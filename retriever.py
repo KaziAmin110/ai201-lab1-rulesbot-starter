@@ -68,5 +68,28 @@ def retrieve(query, n_results=N_RESULTS):
     if _collection.count() == 0:
         return []
 
-    # Your implementation here.
-    return []
+    results = _collection.query(
+        query_texts=[query],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"]
+    )
+
+    
+
+    retrieved_chunks = []
+    # results['documents'], results['metadatas'], etc. are lists of lists.
+    # We take index [0] because we only provided one query text.
+    for i in range(len(results["documents"][0])):
+        retrieved_chunks.append({
+            "text": results["documents"][0][i],
+            "game": results["metadatas"][0][i]["game"],
+            "distance": results["distances"][0][i],
+        })
+    
+    for chunk in retrieved_chunks:
+        status = "RELEVANT" if chunk["distance"] < 0.7 else "LOW RELEVANCE"
+        print(f"[{chunk['game']}] ({status} - dist: {chunk['distance']:.3f}) {chunk['text'][:80]}...")
+
+    # Filter out extremely low relevance results to prevent the LLM from hallucinating
+    # based on unrelated text.
+    return [c for c in retrieved_chunks if c["distance"] < 0.8]
