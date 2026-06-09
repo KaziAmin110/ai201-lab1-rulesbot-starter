@@ -16,8 +16,8 @@ CHROMA_PATH = "./chroma_db"
 
 # --- Retrieval ---
 N_RESULTS = 3
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
+CHUNK_SIZE = 300
+CHUNK_OVERLAP = 50
 
 # --- Documents ---
 DOCS_PATH = "./docs"

@@ -116,11 +116,11 @@ handle these cases better, at the cost of more implementation complexity.
 **Actual chunk count produced across all 8 rule books:**
 
 ```
-[your answer here]
+149 chunks
 ```
 
 **One thing that surprised you or didn't match your expectations:**
 
 ```
-[your answer here]
+The use of Fixed Sized chunking seems strange to me as these fixed size chunks may produce chunks which split in the middle of sentences producing resulting in bad context for the generation step. 
 ```

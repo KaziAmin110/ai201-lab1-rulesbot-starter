@@ -88,7 +88,7 @@ def retrieve(query, n_results=N_RESULTS):
     
     for chunk in retrieved_chunks:
         status = "RELEVANT" if chunk["distance"] < 0.7 else "LOW RELEVANCE"
-        print(f"[{chunk['game']}] ({status} - dist: {chunk['distance']:.3f}) {chunk['text'][:80]}...")
+        print(f"[{chunk['game']}] ({status} - dist: {chunk['distance']:.3f}) {chunk['text']}...")
 
     # Filter out extremely low relevance results to prevent the LLM from hallucinating
     # based on unrelated text.

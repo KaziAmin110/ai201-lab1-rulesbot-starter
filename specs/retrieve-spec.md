@@ -45,7 +45,7 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 *Describe how you will use `_collection.query()` to find relevant chunks. What arguments will you pass, and why?*
 
 ```
-[your answer here]
+We will pass `query_texts=[query]` (a list containing the single user query string), `n_results=n_results` (to limit the maximum returned chunks), and `include=["documents", "metadatas", "distances"]` to retrieve the chunk text, the associated game metadata, and the cosine similarity distance for each match.
 ```
 
 ---
@@ -54,13 +54,17 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 
 *Sketch out what one item in your return list looks like as a concrete example. Where does each field come from in the query results?*
 
-```
+```json
 {
-    "text" : "Hello There",
-    "game" : "Uno",
-    "distance" : 0.12
+    "text": "Hello There",
+    "game": "Uno",
+    "distance": 0.12
 }
 ```
+
+- `"text"` comes from `results["documents"][0][i]`
+- `"game"` comes from the `"game"` key in `results["metadatas"][0][i]`
+- `"distance"` comes from `results["distances"][0][i]`
 
 ---
 
@@ -102,9 +106,9 @@ Tradeoffs: Filtering would reduce "noise," but if the embedding model doesn't se
 **Test query and top result returned:**
 
 ```
-Query: [your test query]
-Top result game: [game name]
-Distance score: [score]
+Query: What happens when you roll a 7 in CATAN ? 
+Top result game: CATAN
+Distance score: 0.346
 Does it make sense? [yes / no / explain]
 ```
 
