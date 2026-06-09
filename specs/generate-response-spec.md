@@ -42,7 +42,20 @@ Returns a fallback string (not an error) when `retrieved_chunks` is empty.
 *How will you format the retrieved chunks before passing them to the LLM? Describe the structure — not the code. Consider: will you label chunks by game? Include distance scores? Separate chunks with delimiters?*
 
 ```
-[your answer here]
+Format the retrieved chunks in a structured, hierarchical XML block. 
+Each chunk will be wrapped in its own XML tag containing metadata attributes (game name) and a unique index.
+
+Example Structure:
+<retrieved_rules>
+  <rule_chunk index="1" game="Catan">
+    [Rule text content goes here...]
+  </rule_chunk>
+  
+  <rule_chunk index="2" game="Ticket to Ride">
+    [Rule text content goes here...]
+  </rule_chunk>
+</retrieved_rules>
+
 ```
 
 ---
@@ -52,7 +65,11 @@ Returns a fallback string (not an error) when `retrieved_chunks` is empty.
 *Write the exact system prompt instruction you will use to prevent the model from answering beyond the retrieved text. This is the most important design decision in this function.*
 
 ```
-[your answer here]
+You are a strict board game rules assistant. Answer the user's question using ONLY the provided rules text.
+Strictly adhere to the following rules:
+1. GROUNDING: Rely ONLY on facts directly and explicitly stated in the provided text. Do not assume, extrapolate, speculate, or make logical leaps.
+2. NO OUTSIDE KNOWLEDGE: Do not use any prior knowledge you have about board games, real-world rules, or game terms. If the provided text contradicts real-world rules, follow the provided text.
+3. MISSING INFORMATION: If the provided text does not contain the direct answer to the query, state clearly: "I cannot find the answer in the provided rules." Do not try to answer using general knowledge or guess.
 ```
 
 ---
