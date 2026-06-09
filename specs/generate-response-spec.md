@@ -70,6 +70,8 @@ Strictly adhere to the following rules:
 1. GROUNDING: Rely ONLY on facts directly and explicitly stated in the provided text. Do not assume, extrapolate, speculate, or make logical leaps.
 2. NO OUTSIDE KNOWLEDGE: Do not use any prior knowledge you have about board games, real-world rules, or game terms. If the provided text contradicts real-world rules, follow the provided text.
 3. MISSING INFORMATION: If the provided text does not contain the direct answer to the query, state clearly: "I cannot find the answer in the provided rules." Do not try to answer using general knowledge or guess.
+4. CITATION: Always identify which game the answer comes from. Make sure to clearly state the game name in your response (e.g. \"In [Game Name], ...\").
+
 ```
 
 ---
@@ -79,7 +81,7 @@ Strictly adhere to the following rules:
 *Write the exact instruction you will use to tell the model to identify which game its answer comes from.*
 
 ```
-[your answer here]
+Always identify which game the answer comes from. Make sure to clearly state the game name in your response (e.g. "In [Game Name], ...").
 ```
 
 ---
@@ -89,7 +91,7 @@ Strictly adhere to the following rules:
 *What should the response say when the answer isn't found in the loaded rule books? Write the exact fallback message.*
 
 ```
-[your answer here]
+"I cannot find the answer in the provided rules."
 ```
 
 ---
@@ -99,7 +101,7 @@ Strictly adhere to the following rules:
 *`retrieved_chunks` may include chunks with high distance scores (weak relevance). Will you filter these out before building context, pass them all in, or handle them another way? What are the tradeoffs?*
 
 ```
-[your answer here]
+Pass all retrieved chunks in. Let the strict grounding system prompt determine if the rules contain the answer. This is safer since sometimes relevant details might reside in chunks with slightly higher distance, but the model can rule them out if they don't apply.
 ```
 
 ---
@@ -109,7 +111,8 @@ Strictly adhere to the following rules:
 *Describe how you will structure the messages list for the API call — what goes in the system message vs. the user message?*
 
 ```
-[your answer here]
+System message: Strict rules assistant persona, grounding rules, citation requirements, and missing info fallback.
+User message: Hierarchical XML rules context block and user's original query.
 ```
 
 ---
@@ -121,14 +124,14 @@ Strictly adhere to the following rules:
 **Test query and response:**
 
 ```
-Query: [your test query]
-Response: [abbreviated response]
-Correctly grounded? [yes / no]
-Cited the right game? [yes / no]
+Query: What happens at the start of a turn in Catan?
+Response: In Catan, at the start of your turn, you roll both dice.
+Correctly grounded? yes
+Cited the right game? yes
 ```
 
 **One thing you changed from your original spec after seeing the actual output:**
 
 ```
-[your answer here]
+Ensured that the system prompt explicitly tells the model to start or clearly mention the game name (e.g. "In [Game Name], ...") so citation is unambiguous.
 ```

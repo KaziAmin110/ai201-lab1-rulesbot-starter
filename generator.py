@@ -35,5 +35,40 @@ def generate_response(query, retrieved_chunks):
             "Try rephrasing your question — or check that your ingestion pipeline is working."
         )
 
-    # Your implementation here.
-    return "⚙️ Response generation not yet implemented. Complete Milestone 3 to activate answers."
+    # Format the retrieved chunks in a structured XML block as specified
+    context_parts = ["<retrieved_rules>"]
+    for i, chunk in enumerate(retrieved_chunks, start=1):
+        game_name = chunk.get("game", "Unknown Game")
+        text = chunk.get("text", "").strip()
+        context_parts.append(f'  <rule_chunk index="{i}" game="{game_name}">\n    {text}\n  </rule_chunk>')
+    context_parts.append("</retrieved_rules>")
+    context_str = "\n".join(context_parts)
+
+    # System prompt - grounding instruction and citation instruction
+    system_prompt = (
+        "You are a strict board game rules assistant. Answer the user's question using ONLY the provided rules text.\n"
+        "Strictly adhere to the following rules:\n"
+        "1. GROUNDING: Rely ONLY on facts directly and explicitly stated in the provided text. Do not assume, extrapolate, speculate, or make logical leaps.\n"
+        "2. NO OUTSIDE KNOWLEDGE: Do not use any prior knowledge you have about board games, real-world rules, or game terms. If the provided text contradicts real-world rules, follow the provided text.\n"
+        "3. MISSING INFORMATION: If the provided text does not contain the direct answer to the query, state clearly: \"I cannot find the answer in the provided rules.\" Do not try to answer using general knowledge or guess.\n"
+        "4. CITATION: Always identify which game the answer comes from. Make sure to clearly state the game name in your response (e.g. \"In [Game Name], ...\")."
+    )
+
+    user_message = (
+        f"Context:\n{context_str}\n\n"
+        f"Query: {query}"
+    )
+
+    try:
+        response = _client.chat.completions.create(
+            model=LLM_MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            temperature=0.0,
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error generating response: {str(e)}"
+
